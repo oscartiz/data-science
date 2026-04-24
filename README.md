@@ -1,50 +1,23 @@
-# ZKML Rust Pipeline 🚀
+# Omnichannel Equilibrium: Causal MARL for Dynamic Pricing
 
-A Zero-Knowledge Machine Learning (ZKML) pipeline built in Rust using the [Halo2](https://github.com/zcash/halo2) proving system. 
+This repository contains the implementation of **"The Omnichannel Equilibrium"**, a prescriptive analytics system that combines Double Machine Learning (DML) for Causal Inference and Multi-Agent Reinforcement Learning (MARL) to optimize global dynamic pricing and inventory allocation.
 
-This repository demonstrates how to execute a machine learning inference task (specifically, a Linear Regression model) and generate a cryptographic proof that the computation was done correctly—**without revealing the underlying model weights, the bias, or the input data**.
+## Contents
+- `data/`: Contains the datasets used for this project (e.g., shoe sales dataset).
+- `explore_data.ipynb`: Initial exploratory data analysis (EDA) of the global shoe sales dataset.
+- `omnichannel_equilibrium.ipynb`: The core notebook containing the architecture, the Causal ML setup, the world simulator, and the MARL agent simulation.
+- `run_experiment.py`: The python script used to run the end-to-end test and generate plots.
+- `REPORT.md`: A deep-dive research report on the methodology, architecture, and simulation results.
 
-## How It Works 🧠
+## Quick Start
+1. Install dependencies:
+   ```bash
+   pip install torch econml scikit-learn ray[rllib] gym pandas numpy matplotlib seaborn
+   ```
+2. Open `omnichannel_equilibrium.ipynb` and run the simulation cells to observe the dynamic pricing agent in action.
 
-The core of this project is the `LinearRegressionCircuit`. It operates under a **Full Privacy** model:
-- **Private Inputs (Data):** The input features to the model `x` are assigned to Halo2 advice columns, keeping them completely hidden.
-- **Private Weights (Model):** The pre-trained weights `w` and bias `b` are also assigned to advice columns. The verifier never sees them.
-- **Public Output (Prediction):** The final computed prediction `y` is assigned to an instance column, making it public.
-
-The Prover demonstrates: *"I know a set of weights and some input data that result in exactly this prediction output, and I computed it correctly according to the model architecture."*
-
-### Circuit Architecture
-1. **`mul_add` gate:** Multiplies each input feature by its corresponding weight and accumulates the sum (`acc_next = acc_cur + x * w`).
-2. **`add_bias` gate:** Adds the final bias to the accumulated sum (`acc_final = acc_cur + b`).
-
-## Getting Started 🛠️
-
-### Prerequisites
-- [Rust](https://www.rust-lang.org/tools/install) (Edition 2024 or later)
-- Cargo
-
-### Running the Pipeline
-To run the ZKML pipeline simulation over the mock dataset, simply execute:
-```bash
-cargo run
-```
-
-### Expected Output
-The program will load a mock dataset of 4 items, run the inference using a set of private weights (`y = 5*x1 + 2*x2 + 10`), and verify the Zero-Knowledge proofs for each sample.
-
-```text
-Starting ZKML Pipeline Simulation...
-Model: y = 5*x1 + 2*x2 + 10 (Weights and Bias will be Private)
-Dataset of 4 items loaded. Input Data will be Private.
-Running inference and generating Zero-Knowledge Proofs...
-
-Sample 0:
-  ✅ Proof verified! Inference computed correctly. Output: 0x0000000000000000000000000000000000000000000000000000000000000015
-...
-```
-*(Note: Output values are displayed in hexadecimal. For example, `0x15` is `21`)*
-
-The program also includes **Invalid Scenarios** testing to ensure the circuit is robust:
-- It attempts to verify a tampered public output.
-- It attempts to verify a proof generated with incorrect/fraudulent weights.
-Both scenarios are expected to be correctly rejected by the verifier.
+## Highlights
+- **Double Machine Learning**: Used to isolate the conditional average treatment effect (CATE) of price changes on demand.
+- **Entity Embeddings**: Handles high-cardinality categorical features (e.g., Brand, Color).
+- **Hype Index**: A custom momentum metric used to provide time-series awareness to the agent.
+- **MARL Simulator**: A custom `MarketWorldModel` that simulates realistic market dynamics for RL agents to interact with.
