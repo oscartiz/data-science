@@ -13,6 +13,10 @@ df = pd.read_csv('data/tortilla_prices.csv')
 # Drop missing values
 df = df.dropna(subset=['Price per kilogram'])
 
+# FIX: Filter ONLY for Mom and Pop Stores (Tortillerías)
+# Supermarkets use tortillas as loss leaders and distort the true price
+df = df[df['Store type'] == 'Mom and Pop Store']
+
 # Create datetime index
 df['Date'] = pd.to_datetime(df[['Year', 'Month', 'Day']])
 
@@ -69,11 +73,11 @@ upper_series = pd.Series(conf_int[:, 1], index=forecast_index)
 sns.set_theme(style="whitegrid")
 plt.figure(figsize=(12, 6))
 
-plt.plot(ts, label='Historical Tortilla Index', color='goldenrod', linewidth=2)
+plt.plot(ts, label='Historical Tortilla Index (Mom & Pop)', color='goldenrod', linewidth=2)
 plt.plot(forecast_series, label='ARIMA Forecast', color='blue', linewidth=2)
 plt.fill_between(forecast_index, lower_series, upper_series, color='blue', alpha=0.2, label='95% Confidence Interval')
 
-plt.title('Tortilla Index: Historical & 2-Year Forecast (kg/day)', fontsize=16)
+plt.title('Tortilla Index (Traditional): Historical & 2-Year Forecast', fontsize=16)
 plt.xlabel('Date', fontsize=12)
 plt.ylabel('Tortilla Index (kg/day)', fontsize=12)
 plt.legend(loc='upper left')

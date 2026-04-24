@@ -11,6 +11,10 @@ df = pd.read_csv('data/tortilla_prices.csv')
 # Drop missing values
 df = df.dropna(subset=['Price per kilogram'])
 
+# FIX: Filter ONLY for Mom and Pop Stores (Tortillerías)
+# Supermarkets use tortillas as loss leaders and distort the true price
+df = df[df['Store type'] == 'Mom and Pop Store']
+
 # Aggregate average national price by year
 yearly_price = df.groupby('Year')['Price per kilogram'].mean().reset_index()
 

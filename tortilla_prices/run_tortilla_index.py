@@ -11,6 +11,11 @@ df = pd.read_csv('data/tortilla_prices.csv')
 # Drop missing values
 df = df.dropna(subset=['Price per kilogram'])
 
+# FIX: Filter ONLY for Mom and Pop Stores (Tortillerías)
+# Supermarkets use tortillas as loss leaders (made with cheaper Maseca) and heavily discount them.
+# The true socioeconomic indicator relies on traditional tortillerías.
+df = df[df['Store type'] == 'Mom and Pop Store']
+
 # Aggregate average national price by year
 yearly_price = df.groupby('Year')['Price per kilogram'].mean().reset_index()
 
@@ -31,13 +36,13 @@ merged['Tortilla Index (kg/day)'] = merged['SMG_Wage'] / merged['Price per kilog
 sns.set_theme(style="whitegrid")
 plt.figure(figsize=(12, 6))
 
-plt.plot(merged['Year'], merged['Tortilla Index (kg/day)'], marker='o', label='National Tortilla Index', color='goldenrod', linewidth=3)
+plt.plot(merged['Year'], merged['Tortilla Index (kg/day)'], marker='o', label='National Tortilla Index (Mom & Pop Stores)', color='goldenrod', linewidth=3)
 
 # Highlight the lowest point (the Lost Decade bottom)
 min_idx = merged['Tortilla Index (kg/day)'].idxmin()
 plt.scatter(merged.loc[min_idx, 'Year'], merged.loc[min_idx, 'Tortilla Index (kg/day)'], color='red', s=100, zorder=5, label=f"Lowest Purchasing Power ({merged.loc[min_idx, 'Year']})")
 
-plt.title('The Tortilla Index: Kilograms of Tortilla per Minimum Wage (2007 - 2024)', fontsize=16)
+plt.title('The Tortilla Index (Traditional Tortillerías): kg per Minimum Wage', fontsize=16)
 plt.xlabel('Year', fontsize=12)
 plt.ylabel('Tortilla Index (kg)', fontsize=12)
 plt.xticks(merged['Year'], rotation=45)
